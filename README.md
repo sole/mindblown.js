@@ -20,27 +20,51 @@ TODO: List which elements can be replaced by JavaScript defined scenes, and how 
 
 ```javascript
 var MindBlown = require('mindblown.js');
-var htmlSlidesElement = document.getElementById('slides');
-var slides = new MindBlown();
+var selector = '#slides section';
+var options = { cheapRenderer: false };
+
+var slides = MindBlown(selector, options);
 
 slides.on('load_complete', function() {
 	document.body.appendChild(slides.domElement);
 });
 
-slides.load(htmlSlidesElement);
+slides.load();
 ```
 
-## Options
+## Methods
 
-These options can be passed when calling the MindBlown.js constructor:
+### `MindBlown(selector, options)` returns `Slides` instance.
+
+`selector` is a string describing a DOM selector which points to any number of `section` elements. E.g. `#slides section`. Or just `section`—depends on your particular HTML markup.
+
+`options` is a JavaScript object, with keys and values. For example:
 
 ```javascript
-var slides = new MindBlown({ optionA: ... });
+options = { cheapRenderer: false };
 ```
 
-### `cheapRenderer`
+The following options can be passed when calling `MindBlown`:
 
-Uses lower quality renderer without antialias
+* `cheapRenderer`: Uses a lower quality renderer, without antialias.
+
+### `Slides` (event emitter)
+
+#### Events
+
+The following events will be triggered when actions happen on a `Slides` instance:
+
+* `load_progress` (`value: %`), each time a section is loaded. `value` represents the loaded percentage, out of the total.
+* `load_complete` (no parameters).
+* `change` (`{ index: the new active section number }`).
+
+To listen for events, use the `on` method:
+
+```javascript
+slides.on('load_progress', function(ev) {
+	console.log('Loaded: ' + ev.value);
+});
+```
 
 ## Working on this
 
@@ -55,20 +79,24 @@ The example uses the distributable build in `dist/` which will be eventually als
 
 Every time a change is made in the core MindBlown code you'll need to rebuild. TODO: add a file watcher to rebuild on demand.
 
+The `dist` folder should be checked in the repository - so if someone git clones the repository, they can run the example without even running `npm install && npm run build`.
+
+The `package.json` file exposes `src/index.js`, not the `dist` version. This is for people building presentations with node.js, and this also allows bundlers to do whatever optimisations they need to do, which are harder to do if the code is a big bundle.
+
 ## Internals
 
-`
+```
 slides = new MindBlown();
 slides.init(htmlSlides)
 	// ...
 	MindBlown -> htmlTo3D
 					-> htmlTo3DSlide
 					...
-`
+```
 
 ### Events
 
-There's lots of asynchronicity here. We use `EventEmitter` rather than DOM style events.
+There a lot of asynchronicity here. We use node.js's `EventEmitter` rather than DOM style events.
 
 The pattern to make an object an EventEmitter and listen to its events is the following:
 
