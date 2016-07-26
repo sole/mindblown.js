@@ -12,7 +12,6 @@
 		
 		var progressElement = document.getElementById('progress');
 
-
 		slides.on('load_progress', function(ev) {
 			progressElement.innerHTML = 'loaded ' + ev.value + '%';
 		});
