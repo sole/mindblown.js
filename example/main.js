@@ -8,7 +8,7 @@
 		// window.MindBlown is available
 
 		var slidesSelector = '#slides section';
-		var slides = MindBlown(slidesSelector, {});
+		slides = MindBlown(slidesSelector, {});
 		
 		var progressElement = document.getElementById('progress');
 
@@ -34,7 +34,7 @@
 		loaderElement.classList.add('transparent')
 
 		var rendererContainer = document.getElementById('renderer');
-		rendererContainer.appendChild(slides.domElement);
+		rendererContainer.appendChild(slides.renderer.domElement);
 		rendererContainer.classList.remove('transparent');
 	}
 
