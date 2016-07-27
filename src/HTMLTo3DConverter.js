@@ -18,8 +18,12 @@ function HTMLto3DConverter() {
 		var slideConverter = new HTMLto3DSlideConverter();
 		slideConverter.on('processing_end', finishSlide);
 
-		console.log('converting html to 3d');
+		console.log('Converting HTML to 3D: ', elements.length + ' elements');
 		console.log(elements);
+
+		self.emit('processing_start', {
+			numElements: elements.length
+		});
 
 		function processNextSlide() {
 			var el = elements[index];
@@ -36,7 +40,7 @@ function HTMLto3DConverter() {
 		
 			console.log('slide processor finished', ev, index);
 			
-			self.emit('slide_process_end', {
+			self.emit('slide_processing_end', {
 				index: index
 			});
 

@@ -1,7 +1,7 @@
 var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
 
-module.exports = function Loader(slides, htmlItems, options) {
+module.exports = function Loader(slides, htmlItems, options, onProgress, onComplete) {
 	console.log('Loader');
 
 	// The beginning is essentially synchronous
@@ -11,9 +11,7 @@ module.exports = function Loader(slides, htmlItems, options) {
 	slides.sceneData = initialiseScene();
 
 	// This bit is asynchronous due to assets loaded asynchronously
-	loadContent(htmlItems, options, slides.audioSystem.context, (progress) => {
-	}, (complete) => {
-	});
+	loadContent(htmlItems, options, slides.audioSystem.context, onProgress, onComplete);
 	
 };
 
@@ -73,7 +71,7 @@ function loadContent(htmlItems, options, audioSystem, onProgress, onComplete) {
 	});
 
 	converter.on('slide_processing_start', function(ev) {
-		console.log('start ' + ev.index, ev.element);
+		console.log('slide start ' + ev.index, ev.element);
 		console.time('slide' + ev.index);
 	});
 
