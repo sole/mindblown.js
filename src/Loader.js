@@ -1,4 +1,5 @@
 var THREE = require('three');
+var HTMLto3DConverter = require('./HTMLto3DConverter');
 
 module.exports = function Loader(slides, htmlItems, options) {
 	console.log('Loader');
@@ -10,7 +11,7 @@ module.exports = function Loader(slides, htmlItems, options) {
 	slides.sceneData = initialiseScene();
 
 	// This bit is asynchronous due to assets loaded asynchronously
-	loadContent(htmlItems, options, (progress) => {
+	loadContent(htmlItems, options, slides.audioSystem.context, (progress) => {
 	}, (complete) => {
 	});
 	
@@ -23,7 +24,7 @@ function initialiseAudio(options) {
 	limiter.connect(audioContext.destination);
 
 	return {
-		audioContext: audioContext,
+		context: audioContext,
 		limiter: limiter
 	};
 
@@ -60,6 +61,33 @@ function initialiseScene() {
 	
 }
 
-function loadContent(htmlItems, options, onProgress, onComplete) {
+function loadContent(htmlItems, options, audioSystem, onProgress, onComplete) {
 	
+	var converter = new HTMLto3DConverter();
+
+	var numElements = 1;
+
+	converter.on('processing_start', function(ev) {
+		numElements = ev.numElements;
+		console.log('Going to process', numElements);
+	});
+
+	converter.on('slide_processing_start', function(ev) {
+		console.log('start ' + ev.index, ev.element);
+		console.time('slide' + ev.index);
+	});
+
+	converter.on('slide_processing_end', function(ev) {
+		console.timeEnd('slide' + ev.index);
+		var perc = (100 * (ev.index + 1) / numElements).toFixed(2);
+		onProgress({ value: perc });
+	});
+
+	converter.on('processing_end', function(ev) {
+		var slideObjs = ev.slides;
+		onComplete(slideObjs);
+	});
+
+	converter.process(htmlItems, options, audioSystem);
+
 }
