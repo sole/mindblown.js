@@ -36,6 +36,15 @@
 		var rendererContainer = document.getElementById('renderer');
 		rendererContainer.appendChild(slides.renderer.domElement);
 		rendererContainer.classList.remove('transparent');
+
+		requestAnimationFrame(render);
+	}
+
+
+	function render(t) {
+		// TODO uncomment
+		// requestAnimationFrame(render);
+		slides.render(t);
 	}
 
 })();

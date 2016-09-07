@@ -3,7 +3,15 @@ var util = require('util');
 var THREE = require('three');
 var HTMLto3DSlideConverter = require('./HTMLto3DSlideConverter');
 
-
+/**
+ * Takes an array of HTML slides (often <section> elements with their children),
+ * and converts them into 3D slides.
+ *
+ * The result of the conversion will be an array of Renderable objects.
+ *
+ * Conversion is delegated to HTMLto3DSlideConverter.
+ *
+ */
 function HTMLto3DConverter() {
 
 	EventEmitter.call(this);

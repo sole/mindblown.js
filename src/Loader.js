@@ -1,6 +1,12 @@
 var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
 
+/**
+ * Deals with all the loading and initialisation of assets so the Slides object
+ * doesn't deal with 'low level' implementation details.
+ *
+ * Creates THREE WebGL renderer and a Web Audio context.
+ */
 module.exports = function Loader(slides, htmlItems, options, onProgress, onComplete) {
 	console.log('Loader');
 
@@ -11,7 +17,17 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 	slides.sceneData = initialiseScene();
 
 	// This bit is asynchronous due to assets loaded asynchronously
-	loadContent(htmlItems, options, slides.audioSystem.context, onProgress, onComplete);
+	loadContent(htmlItems, options, slides.audioSystem.context, onProgress, function(slideObjects) {
+		// TODO distribute slides horizontally before emitting the event
+		
+		// Add the slides to the scene
+		var scene = slides.sceneData.scene;
+		slideObjects.forEach((obj, index) => {
+			scene.add(obj);
+		});
+		
+		onComplete(slideObjects);
+	});
 	
 };
 

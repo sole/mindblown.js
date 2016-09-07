@@ -2,6 +2,11 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var Loader = require('./Loader');
 
+/**
+ * - audioSystem
+ * - renderer
+ * - sceneData
+ */
 function Slides(htmlSlides, options) {
 	EventEmitter.call(this);
 
@@ -20,6 +25,28 @@ function Slides(htmlSlides, options) {
 		});
 
 		console.log(this);
+	};
+
+
+	this.render = function(t) {		
+		/*
+		 * controls.update();
+		// Do not try to render the 'current slide' until we have been
+		// told which slide is it
+		if(currentSlideNumber >= 0) {
+			threeDeeSlides[currentSlideNumber].render(time);
+		}
+		TWEEN.update(time);
+		camera.lookAt(cameraTarget);
+		
+		currentRenderer.render(scene, camera);
+
+		 */
+		// TODO less this and more local variables
+		this.sceneData.camera.position.set(0, 0, 10);
+		this.sceneData.camera.lookAt(this.sceneData.cameraTarget);
+		this.renderer.render(this.sceneData.scene, this.sceneData.camera);
+
 	};
 };
 
