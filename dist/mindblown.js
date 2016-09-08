@@ -43073,6 +43073,7 @@ module.exports = HTMLto3DSlideConverter;
 },{"./ElementToObjectFactory":8,"./Renderable":12,"./distributeObjects":15,"events":2,"three":5,"util":7}],11:[function(require,module,exports){
 var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
+var distributeObjects = require('./distributeObjects');
 
 /**
  * Deals with all the loading and initialisation of assets so the Slides object
@@ -43095,9 +43096,15 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 		
 		// Add the slides to the scene
 		var scene = slides.sceneData.scene;
+		var limiter = slides.audioSystem.limiter;
+		
 		slideObjects.forEach((obj, index) => {
 			scene.add(obj);
+			obj.audioNode.connect(limiter);
 		});
+
+		// Position slides horizontally, left to right
+		distributeObjects(slideObjects, { dimension: 'x' });
 		
 		onComplete(slideObjects);
 	});
@@ -43179,7 +43186,7 @@ function loadContent(htmlItems, options, audioSystem, onProgress, onComplete) {
 
 }
 
-},{"./HTMLto3DConverter":9,"three":5}],12:[function(require,module,exports){
+},{"./HTMLto3DConverter":9,"./distributeObjects":15,"three":5}],12:[function(require,module,exports){
 var THREE = require('three');
 
 function Renderable(audioContext) {

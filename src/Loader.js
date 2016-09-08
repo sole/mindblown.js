@@ -1,5 +1,6 @@
 var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
+var distributeObjects = require('./distributeObjects');
 
 /**
  * Deals with all the loading and initialisation of assets so the Slides object
@@ -22,9 +23,15 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 		
 		// Add the slides to the scene
 		var scene = slides.sceneData.scene;
+		var limiter = slides.audioSystem.limiter;
+		
 		slideObjects.forEach((obj, index) => {
 			scene.add(obj);
+			obj.audioNode.connect(limiter);
 		});
+
+		// Position slides horizontally, left to right
+		distributeObjects(slideObjects, { dimension: 'x' });
 		
 		onComplete(slideObjects);
 	});
