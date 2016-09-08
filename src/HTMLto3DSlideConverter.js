@@ -3,6 +3,7 @@ var util = require('util');
 var THREE = require('three');
 var Renderable = require('./Renderable');
 var ElementToObjectFactory = require('./ElementToObjectFactory');
+var distributeObjects = require('./distributeObjects');
 
 function HTMLto3DSlideConverter() {
 	
@@ -30,18 +31,29 @@ function HTMLto3DSlideConverter() {
 		var childObjects = [];
 		
 		children.forEach((el) => {
+
 			var object = factory.convert(el);
-			console.log('factory returned', object);
+			
 			if(object) {
 				childObjects.push(object);
-				// TODO do via the selectivelyAppend thing
-				contentsObject.add(object);
+				
+				if(object.isRenderable) {
+					slideObject.add(object);
+				} else {
+					contentsObject.add(object);
+				}
+
+				if(object.audioNode) {
+					object.audioNode.connect(slideObject.audioNode);
+				}
+
 			}
 
-
 		});
-		
-		//selectivelyAppend(childObjects, slideObject, contentsObject);
+
+		// We only distribute vertically the non-renderables
+		// Renderables are centered in 0, 0 so it's easier to build animations that take over the entire screen, etc
+		distributeObjects(contentsObject.children, { offset: 0, dimension: 'y', direction: -1 });
 		
 		slideObject.add(contentsObject);
 
