@@ -43,7 +43,7 @@ function Slides(htmlSlides, options) {
 
 		 */
 		// TODO less this and more local variables
-		this.sceneData.camera.position.set(0, 0, 10);
+		this.sceneData.camera.position.set(0, 0, 100);
 		this.sceneData.camera.lookAt(this.sceneData.cameraTarget);
 		this.renderer.render(this.sceneData.scene, this.sceneData.camera);
 
