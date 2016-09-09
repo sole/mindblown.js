@@ -70,8 +70,7 @@
 
 
 	function render(t) {
-		// TODO uncomment
-		// requestAnimationFrame(render);
+		requestAnimationFrame(render);
 		slides.render(t);
 	}
 

@@ -1,13 +1,11 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
+var TWEEN = require('tween.js');
 var Loader = require('./Loader');
 var getDistanceToFit = require('./getDistanceToFit');
+var tweenObject = require('./tweenObject');
 
-/**
- * - audioSystem
- * - renderer
- * - sceneData
- */
+
 function Slides(htmlSlides, options) {
 	EventEmitter.call(this);
 
@@ -61,7 +59,7 @@ function Slides(htmlSlides, options) {
 	};
 
 
-	this.render = function(t) {		
+	this.render = function(time) {		
 		/*
 		 * controls.update();
 		// Do not try to render the 'current slide' until we have been
@@ -69,13 +67,10 @@ function Slides(htmlSlides, options) {
 		if(currentSlideNumber >= 0) {
 			slides[currentSlideNumber].render(time);
 		}
-		TWEEN.update(time);
-		camera.lookAt(cameraTarget);
 		
-		currentRenderer.render(scene, camera);
-
 		 */
 		
+		TWEEN.update(time);
 		camera.lookAt(cameraTarget);
 		renderer.render(scene, camera);
 
@@ -105,20 +100,18 @@ function Slides(htmlSlides, options) {
 		slide.activate();
 
 		//var transitionDuration = slide.options.transitionDuration !== undefined ? slide.options.transitionDuration : 1000;
+		var transitionDuration = 1000; // TODO use ^^^ above (need to read slide options)
 
-		/*tweenObject(cameraTarget, {
-			x: slideCenter.x,
-			y: slideCenter.y,
-			z: slideCenter.z
-		}, transitionDuration).start();*/
-		cameraTarget.x = slide.center.x;//TODO with tween
+		tweenObject(cameraTarget, {
+			x: slide.center.x,
+			y: slide.center.y,
+			z: slide.center.z
+		}, transitionDuration).start();
 
 		var distance = getDistanceToFit(camera, slide.contentsObject, rendererWidth, rendererHeight);
 
 		var dstCamera = slide.center.clone();
 		dstCamera.z += distance;
-
-		/*
 
 		// Make the camera a little more interesting by subtly going randomly left or right
 		var r = 20;
@@ -134,17 +127,11 @@ function Slides(htmlSlides, options) {
 			z: dstCamera.z
 		}, transitionDuration)
 		.onUpdate(function() {
-			audioContext.listener.setPosition(this.x, this.y, this.z);
+			// TODO audioContext.listener.setPosition(this.x, this.y, this.z);
 		})
 		.start();
-*/
-		camera.position.x = dstCamera.x;
-		camera.position.y = dstCamera.y;
-		camera.position.z = dstCamera.z;
 
 		this.emit('change', { index: slideNumber });
-
-		this.render();
 
 	};
 
