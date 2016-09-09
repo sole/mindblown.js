@@ -61,7 +61,6 @@ function HTMLto3DSlideConverter() {
 		// and ignore other objects that might act as decorations etc
 		slideObject.contentsObject = contentsObject;
 
-
 		self.emit('processing_end', {
 			slide: slideObject,
 			element: element

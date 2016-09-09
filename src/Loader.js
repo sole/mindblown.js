@@ -32,6 +32,18 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 
 		// Position slides horizontally, left to right
 		distributeObjects(slideObjects, { dimension: 'x' });
+
+		// Calculate the slides center, for convenience-that way we can use it as the camera target later on
+		// (slides position won't change past this point)
+		slideObjects.forEach((obj) => {
+			var box = new THREE.Box3();
+			box.setFromObject(obj);
+			var slideCenter = box.center();
+			obj.center = slideCenter;
+			console.log('center', slideCenter);
+		});
+
+
 		
 		onComplete(slideObjects);
 	});
@@ -53,13 +65,14 @@ function initialiseAudio(options) {
 
 function initialiseRenderer(options) {
 	
-	if(options.cheapRenderer) {
+	if(options.renderer.cheap) {
 		renderer = new THREE.WebGLRenderer({});
 	} else {
 		renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setPixelRatio(window.devicePixelRatio);
 	}
 
+	renderer.setSize(options.renderer.width, options.renderer.height);
 	renderer.setClearColor(options.colours.background, 1.0);
 
 	return renderer;
