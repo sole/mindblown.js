@@ -90,6 +90,7 @@ function Slides(htmlSlides, options) {
 		camera.updateProjectionMatrix();
 	};
 
+
 	this.show = function(slideNumber) {
 		
 		if(currentSlideNumber >= 0 && currentSlideNumber !== slideNumber) {
@@ -143,7 +144,25 @@ function Slides(htmlSlides, options) {
 
 		this.emit('change', { index: slideNumber });
 
+		this.render();
+
 	};
+
+
+	this.showNext = function() {
+		var nextSlideNumber = (currentSlideNumber + 1) % slides.length;
+		this.show(nextSlideNumber);
+	};
+
+	
+	this.showPrevious = function() {
+		var previousSlideNumber = currentSlideNumber - 1;
+		if(previousSlideNumber < 0) {
+			previousSlideNumber = slides.length - 1;
+		}
+		this.show(previousSlideNumber);
+	};
+
 
 };
 
