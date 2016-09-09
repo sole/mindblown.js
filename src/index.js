@@ -1,4 +1,4 @@
-var sanitiseOptions = require('./sanitiseOptions');
+var sanitiseOptions = require('./functions/sanitiseOptions');
 var Slides = require('./Slides');
 
 module.exports = function MindBlown(selector, options) {

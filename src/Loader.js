@@ -1,6 +1,6 @@
 var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
-var distributeObjects = require('./distributeObjects');
+var distributeObjects = require('./functions/distributeObjects');
 
 /**
  * Deals with all the loading and initialisation of assets so the Slides object

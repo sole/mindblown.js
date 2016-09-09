@@ -2,8 +2,8 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var TWEEN = require('tween.js');
 var Loader = require('./Loader');
-var getDistanceToFit = require('./getDistanceToFit');
-var tweenObject = require('./tweenObject');
+var getDistanceToFit = require('./functions/getDistanceToFit');
+var tweenObject = require('./functions/tweenObject');
 
 
 function Slides(htmlSlides, options) {

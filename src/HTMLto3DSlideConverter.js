@@ -3,7 +3,7 @@ var util = require('util');
 var THREE = require('three');
 var Renderable = require('./Renderable');
 var ElementToObjectFactory = require('./ElementToObjectFactory');
-var distributeObjects = require('./distributeObjects');
+var distributeObjects = require('./functions/distributeObjects');
 
 function HTMLto3DSlideConverter() {
 	
