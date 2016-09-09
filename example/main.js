@@ -25,7 +25,7 @@
 		slides.on('load_complete', finishInit);
 
 		slides.on('change', function(ev) {
-			// TODO saveURL(ev.index);
+			saveURL(ev.index);
 		});
 
 		slides.load();
@@ -44,7 +44,7 @@
 		rendererContainer.classList.remove('transparent');
 
 		requestAnimationFrame(render);
-		slides.show(0); // TODO read slide number from url
+		readURL();
 	
 		window.addEventListener('keyup', function(ev) {
 
@@ -72,6 +72,27 @@
 	function render(t) {
 		requestAnimationFrame(render);
 		slides.render(t);
+	}
+
+
+	function saveURL(index) {
+		window.location.hash = index;
+	}
+
+
+	function readURL() {
+		var index = 0;
+
+		if(window.location.hash) {
+			var hash = window.location.hash;
+			hash = hash.replace('#', '');
+			index = parseInt(hash, 10);
+			if(isNaN(index)) {
+				index = 0;
+			}
+		}
+
+		slides.show(index);
 	}
 
 })();
