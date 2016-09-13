@@ -20,14 +20,6 @@ function HTMLto3DSlideConverter() {
 		
 		var contentsObject = new THREE.Object3D();
 		
-		// TODO this is related to the 'empty boxes have infinity size' bug
-		// TODO make it create 0 sized boxes again (i.e. not ttt but 0, 0, 0)
-		var ttt = 10 * Math.random();
-		var dummy = new THREE.Mesh(new THREE.BoxGeometry(ttt,ttt,ttt), new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true }));
-		contentsObject.add(dummy);
-
-		
-		// TODO rest of stuff, obviously
 		var factory = new ElementToObjectFactory(options, audioContext);
 		var children = Array.from(element.childNodes);
 		
