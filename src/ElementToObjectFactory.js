@@ -32,10 +32,12 @@ module.exports = function(options, audioContext) {
 		var colours = options.colours;
 
 		return {
-			'H1': { size: 20, colour: colours.primary1 },
-			'H2': { size: 10, colour: colours.primary2 },
+			'H1': { size: 68.54, colour: colours.primary1 },
+			'H2': { size: 42.36, colour: colours.primary2 },
+			'H3': { size: 26.18, colour: colours.primary2 },
+			'H4': { size: 16.18, colour: colours.primary2 },
 			// TODO 'IMG': { replace: 'renderable' },
-			'P': { size: 8, colour: colours.secondary1 },
+			'P': { size: 10, colour: colours.secondary1 },
 			// TODO 'PRE': { replace: 'preformatted', colour: colours.secondary2, size: 7 }
 		};
 
