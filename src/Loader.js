@@ -19,7 +19,6 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 
 	// This bit is asynchronous due to assets loaded asynchronously
 	loadContent(htmlItems, options, slides.audioSystem.context, onProgress, function(slideObjects) {
-		// TODO distribute slides horizontally before emitting the event
 		
 		// Add the slides to the scene
 		var scene = slides.sceneData.scene;
