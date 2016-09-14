@@ -1,6 +1,7 @@
 var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
 var distributeObjects = require('./functions/distributeObjects');
+var makeObjectBox = require('./functions/makeObjectBox');
 
 /**
  * Deals with all the loading and initialisation of assets so the Slides object
@@ -9,7 +10,6 @@ var distributeObjects = require('./functions/distributeObjects');
  * Creates THREE WebGL renderer and a Web Audio context.
  */
 module.exports = function Loader(slides, htmlItems, options, onProgress, onComplete) {
-	console.log('Loader');
 
 	// The beginning is essentially synchronous
 	slides.audioSystem = initialiseAudio(options);
@@ -32,18 +32,19 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 		// Position slides horizontally, left to right
 		distributeObjects(slideObjects, { dimension: 'x' });
 
-		// Calculate the slides center, for convenience-that way we can use it as the camera target later on
-		// (slides position won't change past this point)
 		slideObjects.forEach((obj) => {
-			var box = new THREE.Box3();
-			box.setFromObject(obj);
-			var slideCenter = box.center();
-			obj.center = slideCenter;
-			console.log('center', slideCenter);
+
+			// Apply individual offsets
+			obj.position.y += obj.options.offsetY;
+
+			// Calculate the slides center, for convenience-that way we can use it as the camera target later on
+			// (slides position won't change past this point)
+			var box = makeObjectBox(obj);
+			obj.center = box.center();
+			
 		});
 
-
-		
+		// And we're done!
 		onComplete(slideObjects);
 	});
 	

@@ -99,8 +99,7 @@ function Slides(htmlSlides, options) {
 
 		slide.activate();
 
-		//var transitionDuration = slide.options.transitionDuration !== undefined ? slide.options.transitionDuration : 1000;
-		var transitionDuration = 1000; // TODO use ^^^ above (need to read slide options)
+		var transitionDuration = slide.options.transitionDuration;
 
 		tweenObject(cameraTarget, {
 			x: slide.center.x,

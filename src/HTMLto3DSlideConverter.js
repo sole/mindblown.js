@@ -5,6 +5,7 @@ var Renderable = require('./Renderable');
 var ElementToObjectFactory = require('./ElementToObjectFactory');
 var distributeObjects = require('./functions/distributeObjects');
 var makeObjectBox = require('./functions/makeObjectBox');
+var parseSlideOptions = require('./functions/parseSlideOptions');
 
 function HTMLto3DSlideConverter() {
 	
@@ -16,7 +17,8 @@ function HTMLto3DSlideConverter() {
 
 		var slideObject = new Renderable(audioContext);
 
-		// TODO: parse slide options
+		slideObject.options = parseSlideOptions(element.dataset, options);
+		console.log(slideObject.options);
 		
 		var contentsObject = new THREE.Object3D();
 		
@@ -69,7 +71,8 @@ function HTMLto3DSlideConverter() {
 	function addSpacing(slide) {
 
 		var contentsObject = slide.contentsObject;
-		var slidePadding = 20; // TODO slide.options.padding;
+		var slidePadding = slide.options.padding;
+		console.log('slide padding', slidePadding);
 		var contentBox = makeObjectBox(contentsObject);
 		var contentSize = contentBox.size();
 		var contentCenter = contentBox.center();
@@ -86,11 +89,13 @@ function HTMLto3DSlideConverter() {
 		
 		containerGeom.computeFaceNormals();
 		var helper = new THREE.BoxHelper(containerMesh, 0xFF00FF);
+		// TODO make these transparent again
 		//helper.material.opacity = 0.0;
 		//helper.material.transparent = true;
 		slide.add(helper);
 
 	}
+	
 }
 
 util.inherits(HTMLto3DSlideConverter, EventEmitter);
