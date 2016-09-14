@@ -44,16 +44,11 @@ module.exports = function(options, audioContext) {
 	function makeIsElementKnownFunction(knownElements) {
 
 		var keys = Object.keys(knownElements);
-		console.log(keys);
 
 		return function(name) {
 			return keys.indexOf(name) !== -1;
 		}
 	
-	}
-
-
-	function elementTo3D(element) {
 	}
 
 };
