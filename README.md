@@ -10,7 +10,19 @@ Any suitable HTML container can be the starting point. For example, a `div` with
 
 Each section should have `h1`, `h2`, `h3`, `p`, etc... elements. Roughly, known elements will be converted into 3D objects and placed into space, to be rendered in 3D with WebGL.
 
-Sections might have special attributes to define their behaviour or appearance. TODO: list which ones.
+Sections might have special attributes to define their behaviour or appearance. These attributes are described using element dataset attributes per element. These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we read the dataset field of the element.
+
+* `offset-y`: amount of vertical offset for a given slide. Good for dramatic effects, such as having the initial slide with a very tall offset.
+* `padding`: slide padding around its contents
+* `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
+
+Example:
+
+```html
+<section data-padding="100" data-offset-y="200" transition-duration="10">
+...
+</section>
+```
 
 TODO: List known elements and their appearance when rendered.
 
