@@ -1,6 +1,6 @@
 var makeText = require('./makeText');
 
-module.exports = function Text(element, nodeProperties) {
+module.exports = function Text(element, audioContext, nodeProperties) {
 	var str = element.textContent;
 	var colour = nodeProperties.colour !== undefined ? nodeProperties.colour : 0xFF00FF;
 	
