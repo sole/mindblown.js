@@ -13,6 +13,9 @@
 				cheap: false,
 				width: 320,
 				height: 240
+			},
+			replacements: {
+				'cube': CubeReplacement
 			}
 		});
 		
@@ -93,6 +96,35 @@
 		}
 
 		slides.show(index);
+	}
+
+	function CubeReplacement(Renderable, THREE) {
+
+		return function SceneCube(element, audioContext, nodeProperties) {
+
+			Renderable.call(this, audioContext);
+
+			var n = 200;
+			
+			console.log('init cube');
+
+			var helper = new THREE.AxisHelper(n);
+			this.add(helper);
+
+			var geom = new THREE.BoxGeometry(n, n, n);
+			var mat = new THREE.MeshBasicMaterial({ color: 0xFF00FF, linewidth: 4 });
+			var mesh = new THREE.Mesh(geom, mat);
+			this.add(mesh);
+
+			this.activate = function() {
+				console.log('activate cube');
+			};
+
+			this.deactivate = function() {
+				console.log('deactivate cube');
+			};	
+		
+		}
 	}
 
 })();

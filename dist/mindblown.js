@@ -43728,39 +43728,64 @@ function hasOwnProperty(obj, prop) {
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":8,"_process":5,"inherits":4}],10:[function(require,module,exports){
 var TextObject = require('./objects/Text');
+var Renderable = require('./Renderable');
+var THREE = require('THREE');
 
+/**
+ * ##########(Renderable, THREE) {
+ *	return function(element, audioContext, nodeProperties) {
+ *		Renderable.call(this, audioContext);
+ *
+ *		this.activate = function() {};
+ *		this.render = function() {};
+ *		this.deactivate = function() {};
+ *	}
+ * }
+ *
+ * //side:
+ * r.prototype = Object.create(Renderable.prototype);
+ * r.prototype.constructor = r;
+ */
 module.exports = function(options, audioContext) {
 	
 	var knownElements = makeListOfKnownElements(options);
-	var isElementKnown = makeIsElementKnownFunction(knownElements);
+	var isElementKnown = makeContainsFunction(knownElements);
+	var replacements = makeReplacementsList(options);
+	var hasReplacement = makeContainsFunction(replacements);
 
 	this.convert = function(element) {
 
 		var name = element.nodeName;
 	
-		// TODO check if 'data-replace' attribute is present on the node
-		if(!isElementKnown(name)) {
+		// We check if the 'data-replace' attribute is present on the node
+		// If it is, it takes priority vs a possible element we might know how to render already
+		var replacementName = element.dataset && element.dataset.replace;
+		var replacement = replacements[replacementName];
+		var ctor;
+		var settings;
+		
+		if(replacement) {
+			console.log('choosing replacement = ', replacementName);
+			return new replacement(element, audioContext, element.dataset);
+			settings = {};
+		} else if(isElementKnown(name)) {
+			var elementDefinition = knownElements[name];
+			return elementDefinition.constructor(element, audioContext, elementDefinition.settings);
+		} else {
 			console.log('rejecting', name);
 			return null;
 		}
-
-		var elementDefinition = knownElements[name];
-		console.log(elementDefinition);
-
-		return elementDefinition.constructor(element, audioContext, elementDefinition.settings);
 
 	};
 
 	
 	function makeListOfKnownElements(options) {
 
-		// TODO merge with potential element definitions from `options`
-
 		var list = makeTextElementsList(options);
 		
 		// TODO IMG
 		// TODO PRE/CODE
-
+		
 		return list;
 
 	}
@@ -43790,19 +43815,40 @@ module.exports = function(options, audioContext) {
 
 	}
 
-	function makeIsElementKnownFunction(knownElements) {
-
-		var keys = Object.keys(knownElements);
-
+	
+	function makeContainsFunction(obj) {
+		var keys = Object.keys(obj);
 		return function(name) {
 			return keys.indexOf(name) !== -1;
-		}
-	
+		};
+	}
+
+
+	// We cannot use the replacements directly because in order for them to use
+	// both the same Renderable and THREE objects we have to generate their
+	// constructors via the functions the author provided.
+	// Then we need to augment their constructor prototype too (so authors don't
+	// have to do it, which can be tedious)
+	function makeReplacementsList(options) {
+		var sources = options.replacements;
+		var keys = Object.keys(sources);
+		var replacements = {};
+		
+		keys.forEach((k) => {
+			var gen = sources[k];
+			var ctor = gen(Renderable, THREE);
+			ctor.prototype = Object.create(Renderable.prototype);
+			ctor.prototype.constructor = ctor;
+			replacements[k] = ctor;
+		});
+
+		return replacements;
+
 	}
 
 };
 
-},{"./objects/Text":24}],11:[function(require,module,exports){
+},{"./Renderable":14,"./objects/Text":24,"THREE":1}],11:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var THREE = require('three');
