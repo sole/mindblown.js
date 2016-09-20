@@ -43756,25 +43756,36 @@ module.exports = function(options, audioContext) {
 	this.convert = function(element) {
 
 		var name = element.nodeName;
+		var dataset = element.dataset || {};
 	
 		// We check if the 'data-replace' attribute is present on the node
 		// If it is, it takes priority vs a possible element we might know how to render already
-		var replacementName = element.dataset && element.dataset.replace;
+		var replacementName = dataset.replace;
 		var replacement = replacements[replacementName];
 		var ctor;
 		var settings;
+		var object = null;
 		
 		if(replacement) {
 			console.log('choosing replacement = ', replacementName);
-			return new replacement(element, audioContext, element.dataset);
-			settings = {};
+			object = new replacement(element, audioContext, element.dataset);
 		} else if(isElementKnown(name)) {
 			var elementDefinition = knownElements[name];
-			return elementDefinition.constructor(element, audioContext, elementDefinition.settings);
+			object = elementDefinition.constructor(element, audioContext, elementDefinition.settings);
 		} else {
 			console.log('rejecting', name);
-			return null;
 		}
+
+		if(object) {
+			var isContent = true;
+			console.log('***', dataset);
+			if(dataset.isDecoration !== undefined) {
+				isContent = false;
+			}
+			object.isContent = isContent;
+		}
+
+		return object;
 
 	};
 
@@ -43963,10 +43974,11 @@ function HTMLto3DSlideConverter() {
 			if(object) {
 				childObjects.push(object);
 				
-				if(object.isRenderable) {
-					slideObject.add(object);
-				} else {
+				if(object.isContent) {
 					contentsObject.add(object);
+				} else {
+					console.log('got one decoration', object);
+					slideObject.add(object);
 				}
 
 				if(object.audioNode) {
@@ -44276,14 +44288,14 @@ function Slides(htmlSlides, options) {
 
 	this.render = function(time) {		
 		/*
-		 * controls.update();
+		 * controls.update();*/
 		// Do not try to render the 'current slide' until we have been
 		// told which slide is it
 		if(currentSlideNumber >= 0) {
 			slides[currentSlideNumber].render(time);
 		}
 		
-		 */
+		
 		
 		TWEEN.update(time);
 		camera.lookAt(cameraTarget);
@@ -44372,7 +44384,7 @@ module.exports = Slides;
 
 },{"./Loader":13,"./functions/getDistanceToFit":18,"./functions/tweenObject":22,"events":3,"tween.js":7,"util":9}],16:[function(require,module,exports){
 module.exports = {
-	background: 0xffffff,
+	background: 0xff0000,//ffff,
 	primary1: 0x000000,
 	primary2: 0x008000,
 	secondary1: 0x0000ff,

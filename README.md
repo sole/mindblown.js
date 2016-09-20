@@ -13,7 +13,9 @@ Each section should have `h1`, `h2`, `h3`, `p`, etc... elements. Roughly, known 
 Sections might have special attributes to define their behaviour or appearance. These attributes are described using element dataset attributes per element. These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we read the dataset field of the element.
 
 * `offset-y`: amount of vertical offset for a given slide. Good for dramatic effects, such as having the initial slide with a very tall offset.
+* `is-decoration`: TODO
 * `padding`: slide padding around its contents
+* `replace`: TODO
 * `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
 
 Example:

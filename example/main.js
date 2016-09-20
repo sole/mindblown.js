@@ -112,7 +112,7 @@
 			this.add(helper);
 
 			var geom = new THREE.BoxGeometry(n, n, n);
-			var mat = new THREE.MeshBasicMaterial({ color: 0xFF00FF, linewidth: 4 });
+			var mat = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
 			var mesh = new THREE.Mesh(geom, mat);
 			this.add(mesh);
 
@@ -122,7 +122,11 @@
 
 			this.deactivate = function() {
 				console.log('deactivate cube');
-			};	
+			};
+
+			this.render = function(t) {
+				mesh.rotation.y = t * 0.001;
+			};
 		
 		}
 	}

@@ -27,25 +27,36 @@ module.exports = function(options, audioContext) {
 	this.convert = function(element) {
 
 		var name = element.nodeName;
+		var dataset = element.dataset || {};
 	
 		// We check if the 'data-replace' attribute is present on the node
 		// If it is, it takes priority vs a possible element we might know how to render already
-		var replacementName = element.dataset && element.dataset.replace;
+		var replacementName = dataset.replace;
 		var replacement = replacements[replacementName];
 		var ctor;
 		var settings;
+		var object = null;
 		
 		if(replacement) {
 			console.log('choosing replacement = ', replacementName);
-			return new replacement(element, audioContext, element.dataset);
-			settings = {};
+			object = new replacement(element, audioContext, element.dataset);
 		} else if(isElementKnown(name)) {
 			var elementDefinition = knownElements[name];
-			return elementDefinition.constructor(element, audioContext, elementDefinition.settings);
+			object = elementDefinition.constructor(element, audioContext, elementDefinition.settings);
 		} else {
 			console.log('rejecting', name);
-			return null;
 		}
+
+		if(object) {
+			var isContent = true;
+			console.log('***', dataset);
+			if(dataset.isDecoration !== undefined) {
+				isContent = false;
+			}
+			object.isContent = isContent;
+		}
+
+		return object;
 
 	};
 

@@ -34,10 +34,11 @@ function HTMLto3DSlideConverter() {
 			if(object) {
 				childObjects.push(object);
 				
-				if(object.isRenderable) {
-					slideObject.add(object);
-				} else {
+				if(object.isContent) {
 					contentsObject.add(object);
+				} else {
+					console.log('got one decoration', object);
+					slideObject.add(object);
 				}
 
 				if(object.audioNode) {
