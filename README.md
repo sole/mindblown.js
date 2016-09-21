@@ -4,7 +4,7 @@
 
 This is a framework for creating presentations in 3D, starting with HTML content. This should make it possible to have a print version, and also make the content accessible for people who are visually impaired or cannot cope with 3D graphics.
 
-## How does it work
+## How does it work?
 
 Any suitable HTML container can be the starting point. For example, a `div` with any number of `section` children. Each section corresponds to a slide.
 
@@ -12,10 +12,10 @@ Each section should have `h1`, `h2`, `h3`, `p`, etc... elements. Roughly, known 
 
 Sections might have special attributes to define their behaviour or appearance. These attributes are described using element dataset attributes per element. These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we read the dataset field of the element.
 
-* `offset-y`: amount of vertical offset for a given slide. Good for dramatic effects, such as having the initial slide with a very tall offset.
-* `is-decoration`: TODO
+* `offset-y`: amount of vertical offset for a given slide. Good for 'dramatic effects', such as having the initial slide with a very tall offset.
+* `is-decoration`: by default all elements are assumed to be "content", and they will be laid out from top to bottom like in a page layout. When the slide is shown, the camera will make sure the full contents are in sight. If an element is decorative or you want it to be placed at the center of the slide, specify the `data-is-decoration` attribute and it will be taken out of the document flow. The camera might not show the full extent of the scene if the decorative objects are too big, but this might be an intended effect in some cases.
 * `padding`: slide padding around its contents
-* `replace`: TODO
+* `replace`: specify that the element must be replaced with a custom element. These allow you to display custom 3D graphics and audio within your presentation.
 * `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
 
 Example:
@@ -91,10 +91,9 @@ To try it out locally
 
 The example uses the distributable build in `dist/` which will be eventually also published to npm. If it works with the example, then it's good.
 
-Every time a change is made in the core MindBlown code you'll need to rebuild. TODO: add a file watcher to rebuild on demand.
+Every time a change is made in the core MindBlown code you'll need to rebuild. Or you can use `npm run watch` to start a file watcher that rebuilds the presentation on demand.
 
 The `dist` folder should be checked in the repository - so if someone git clones the repository, they can run the example without even running `npm install && npm run build`.
-
 The `package.json` file exposes `src/index.js`, not the `dist` version. This is for people building presentations with node.js, and this also allows bundlers to do whatever optimisations they need to do, which are harder to do if the code is a big bundle.
 
 ## Internals
@@ -110,7 +109,7 @@ slides.init(htmlSlides)
 
 ### Events
 
-There a lot of asynchronicity here. We use node.js's `EventEmitter` rather than DOM style events.
+There's a lot of asynchronicity here. We use node.js's `EventEmitter` rather than DOM style events.
 
 The pattern to make an object an EventEmitter and listen to its events is the following:
 
@@ -120,7 +119,7 @@ var util = require('util');
 
 var MyObject = function() {
 	EventEmitter.call(this);
-	
+
 	this.doSomething = function() {
 		this.emit('somethingWasDone', { when: Date.now() });
 	};
