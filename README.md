@@ -2,35 +2,82 @@
 
 **NOTE:** *This is a work in progress - please don't file bugs on this yet or tell me it doesn't work for you*
 
-This is a framework for creating presentations in 3D, starting with HTML content. This should make it possible to have a print version, and also make the content accessible for people who are visually impaired or cannot cope with 3D graphics.
+This is a framework for creating presentations in 3D, starting with HTML content. This makes the content accessible in more ways, e.g. for people who are visually impaired or cannot cope with 3D graphics and also allows for having a print version (for those conferences that want a PDF copy of your slides).
 
 ## How does it work?
 
-Any suitable HTML container can be the starting point. For example, a `div` with any number of `section` children. Each section corresponds to a slide.
+Any suitable HTML container can be the starting point. For example, a `div` with any number of `section` children. Each section corresponds to a slide, and it contains normal HTML elements such as `h1`, `h2`, `h3`, `p`, etc.
 
-Each section should have `h1`, `h2`, `h3`, `p`, etc... elements. Roughly, known elements will be converted into 3D objects and placed into space, to be rendered in 3D with WebGL.
-
-Sections might have special attributes to define their behaviour or appearance. These attributes are described using element dataset attributes per element. These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we read the dataset field of the element.
-
-* `offset-y`: amount of vertical offset for a given slide. Good for 'dramatic effects', such as having the initial slide with a very tall offset.
-* `is-decoration`: by default all elements are assumed to be "content", and they will be laid out from top to bottom like in a page layout. When the slide is shown, the camera will make sure the full contents are in sight. If an element is decorative or you want it to be placed at the center of the slide, specify the `data-is-decoration` attribute and it will be taken out of the document flow. The camera might not show the full extent of the scene if the decorative objects are too big, but this might be an intended effect in some cases.
-* `padding`: slide padding around its contents
-* `replace`: specify that the element must be replaced with a custom element. These allow you to display custom 3D graphics and audio within your presentation.
-* `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
-
-Example:
+For example:
 
 ```html
-<section data-padding="100" data-offset-y="200" transition-duration="10">
+<div id="slides">
+	<section>
+		<h1>Hello everyone</h1>
+	</section>
+	<section>
+		<h1>Second slide</h1>
+		<h2>And last!</h2>
+	</section>
+</div>
+```
+
+When **mindblown.js** is called, it will read the contents of elements it knows how to deal with, convert them into 3D objects and render them with WebGL and Web Audio.
+
+Assuming you're using the distributable bundle, you can get three-dimensional slides with something like this:
+
+```javascript
+var slidesSelector = '#slides section';
+var slides = MindBlown(slidesSelector);
+slides.on('load_complete', function() {
+	body.appendChild(slides.renderer.domElement);
+});
+slides.load();
+```
+
+## Slides
+
+### Custom slide attributes
+
+Slides might have special attributes to define their behaviour or appearance. These attributes are prefixed with `data-`. For example:
+
+```html
+<section data-padding="100" data-offset-y="200" data-transition-duration="10">
 ...
 </section>
 ```
 
-TODO: List known elements and their appearance when rendered.
+These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we access them using `dataset` in JavaScript.
 
-TODO: List which elements can be replaced by JavaScript defined scenes, and how to define these scenes and provide code to implement them.
+These are the available attributes:
 
-### User API
+* `offset-y`: amount of vertical offset for a given slide. Good for 'dramatic effects', such as having the initial slide with a very tall offset. Can be negative (the slide is shifted downwards) or positive. (the slide is shifted upwards). The default is 0.
+* `padding`: padding around the contents of the slide.
+* `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
+
+## Elements
+
+mindblown.js supports a basic set of HTML elements, and also supports replacing them with your own provided implementation.
+
+### Element attributes
+
+All elements can use these attributes.
+
+* `replace`: specify that the element must be replaced with a custom element. These allow you to display custom 3D graphics and audio within your presentation.
+* `is-decoration`: by default all elements are assumed to be "content", and they will be laid out from top to bottom like in a page layout. When the slide is shown, the camera will make sure the full contents are in sight. If an element is decorative or you want it to be placed at the center of the slide, specify the `data-is-decoration` attribute and it will be taken out of the document flow. The camera might not show the full extent of the scene if the decorative objects are too big, but this might be an intended effect in some cases.
+
+### Known elements
+
+The engine knows how to render some text elements: `H1` through `H4`, and `P`.
+
+Not implemented yet, but in the works: IMG (<a href="https://github.com/sole/mindblown.js/issues/8">#8</a>) and PRE (for code snippets) (<a href="https://github.com/sole/mindblown.js/issues/9">#9</a>).
+
+### Custom elements
+
+TODO https://github.com/sole/mindblown.js/issues/2
+
+
+## User API
 
 ```javascript
 var MindBlown = require('mindblown.js');
