@@ -11,8 +11,8 @@
 		slides = MindBlown(slidesSelector, {
 			renderer: {
 				cheap: false,
-				width: 320,
-				height: 240
+				width: 640,
+				height: 360
 			},
 			replacements: {
 				'cube': CubeReplacement

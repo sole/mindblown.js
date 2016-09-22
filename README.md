@@ -79,37 +79,55 @@ TODO https://github.com/sole/mindblown.js/issues/2
 
 ## User API
 
-```javascript
-var MindBlown = require('mindblown.js');
-var selector = '#slides section';
-var options = { cheapRenderer: false };
+We've roughly described how to go from HTML to three-dimensional slides above. We're now going into more detail.
 
-var slides = MindBlown(selector, options);
+The whole process can be summarised with the following steps:
 
-slides.on('load_complete', function() {
-	document.body.appendChild(slides.domElement);
-});
+1. Write a selector that describes the slides.
+2. Call the `MindBlown` function to get an instance of `Slides`, passing any options if necessary.
+3. Attach events to the `Slides` instance.
+4. Call the `load()` method on the `Slides` instance.
+5. Once loaded, insert slides renderer canvas on the page, attach listeners for key events, etc, and other stuff required for presenting using a slide deck.
 
-slides.load();
-```
+There are many classes under the hood (you can have a look at [this diagram](./docs/hierarchy.md) to see the relations between them), but you only need to know about the most important ones to use this framework:
 
-## Methods
+* MindBlown ([source](./src/index.js)): the entry point. Sanitises options, builds HTML slides array using the selector, creates and returns an instance of `Slides`.
+* Slides ([source](./src/Slides.js)): the object you'll interact most with. Provides functions for loading and turning HTML into 3D content, advancing the slide, etc.
+* Renderable ([source](./src/Renderable.js)): relevant only if you're going to write your own 3D content. 3D elements are 'Renderables'. Instances are passed an audio context instance and a reference to THREE.js, so they can be written and distributed without including their own copy of THREE.
 
 ### `MindBlown(selector, options)` returns `Slides` instance.
 
 `selector` is a string describing a DOM selector which points to any number of `section` elements. E.g. `#slides section`. Or just `section`—depends on your particular HTML markup.
 
-`options` is a JavaScript object, with keys and values. For example:
+`options` is a JavaScript object, with keys and values. These are split into sections, depending on which component they configure. For example:
 
 ```javascript
-options = { cheapRenderer: false };
+options = {
+	renderer: {
+		cheap: true
+	},
+	replacements: {
+		'cube': CubeReplacement
+	}
+};
 ```
 
-The following options can be passed when calling `MindBlown`:
+The following options can be passed when calling `MindBlown()`:
 
-* `cheapRenderer`: Uses a lower quality renderer, without antialias.
+* `colours`: options to configure the presentation colours. TODO: explain format https://github.com/sole/mindblown.js/issues/10
+* `renderer`: options to configure the renderer
+ * `cheapRenderer`: Uses a lower quality renderer, without antialias. Default is `false` (i.e. use higher quality renderer).
+ * `width`: specify renderer canvas width
+ * `height`: specify renderer canvas height
+* `replacements`: An object with pairs of replacements to be used when converting the slides into 3D.
+
+All the sections and even the options argument are optional, which is to say that you can get functional basic 3D slides by calling `MindBlown()` with just the HTML selector and *no options*.
 
 ### `Slides` (event emitter)
+
+This object exposes methods to select which slide is rendered, and also to render the slide. It also emits events, which you can use to do things such as updating the UI once the slides have been fully loaded, or storing the current slide on a URL hash for easier sharing, for example.
+
+#### Methods
 
 #### Events
 

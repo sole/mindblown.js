@@ -1,8 +1,26 @@
+var defaults = {
+	colours: require('../defaultSettings/colours'),
+	renderer: require('../defaultSettings/renderer')
+};
+
 module.exports = function(options) {
+
 	options = options || {};
 	
-	// TODO sanitise render options too, loading from ./defaultSettings/renderer.js
-	options.colours = options.colours || require('../default-colours'); // TODO move to ./defaultSettings/colours.js
+	Object.keys(defaults).forEach((k) => {
+		var optionsSet = options[k] || {};
+		copyToObject(defaults[k], optionsSet);
+		options[k] = defaults[k];
+	});
 
 	return options;
+
 };
+
+function copyToObject(dst, src) {
+	var srcKeys = Object.keys(src);
+	srcKeys.forEach((k) => {
+		console.log('copying', k, dst[k], src[k]);
+		dst[k] = src[k];
+	});
+}
