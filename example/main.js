@@ -51,23 +51,23 @@
 	
 		window.addEventListener('keyup', function(ev) {
 
-		var keyCode = ev.keyCode;
+			var keyCode = ev.keyCode;
 
-		// Left arrow
-		if(keyCode === 37 || keyCode === 33) {
-			slides.showPrevious();
-			// Right arrow
-		} else if(keyCode === 39 || keyCode === 34) {
-			slides.showNext();
-			// F key
-		} else if(keyCode === 70) {
-			// TODO toggleFullScreen();
-		} else if(keyCode === 51) {
-			// 3 key
-			// TODO slides.toggleAnaglyph();
-		}
+			// Left arrow
+			if(keyCode === 37 || keyCode === 33) {
+				slides.showPrevious();
+				// Right arrow
+			} else if(keyCode === 39 || keyCode === 34) {
+				slides.showNext();
+				// F key
+			} else if(keyCode === 70) {
+				// TODO toggleFullScreen();
+			} else if(keyCode === 51) {
+				// 3 key
+				// TODO slides.toggleAnaglyph();
+			}
 
-	}, false);
+		}, false);
 
 	}
 
