@@ -169,6 +169,34 @@ slides.on('load_progress', function(ev) {
 });
 ```
 
+### Renderable
+
+Renderables are the base class for Slides. Each Slide is a Renderable, and might also have other Renderable children. They differ from standard `Object3D`s in two aspects:
+
+* they have a few additional functions to render the current slide and all its children objects, if they are `Renderable`s as well.
+* they also have an `audioNode` property by default. If you object generates audio, the output should be connected to `audioNode` so the parent can connect the output of its children's `audioNode` to its own internal mixer, and so on.
+
+#### Creating an instance of Renderable
+
+To make an object a `Renderable`, you need to call the `Renderable` function in your constructor, and also set the prototype of your object to be based on the `Renderable` prototype. This gives you access to the base functions. For example:
+
+
+```javascript
+function MyRenderable(/* TODO what are the parameters and the order? audioContext should be first...? */) {
+	Renderable.call(this, audioContext);
+}
+
+MyRenderable.prototype = Object.create(Renderable.prototype);
+MyRenderable.prototype.constructor = MyRenderable;
+```
+
+#### Methods
+
+##### `traverseChildren(callback)`
+##### `activate()`
+##### `deactivate()`
+##### `render()`
+
 ## Working on this
 
 To try it out locally
@@ -183,18 +211,9 @@ The example uses the distributable build in `dist/` which will be eventually als
 Every time a change is made in the core MindBlown code you'll need to rebuild. Or you can use `npm run watch` to start a file watcher that rebuilds the presentation on demand.
 
 The `dist` folder should be checked in the repository - so if someone git clones the repository, they can run the example without even running `npm install && npm run build`.
+
 The `package.json` file exposes `src/index.js`, not the `dist` version. This is for people building presentations with node.js, and this also allows bundlers to do whatever optimisations they need to do, which are harder to do if the code is a big bundle.
 
-## Internals
-
-```
-slides = new MindBlown();
-slides.init(htmlSlides)
-	// ...
-	MindBlown -> htmlTo3D
-					-> htmlTo3DSlide
-					...
-```
 
 ### Events
 
@@ -224,19 +243,3 @@ instance.doSomething();
 
 ```
 
-### Slide objects structure
-
-TODO: are them Renderables?
-
-`
-slideObject
-    |
-	+-> contentsObject <[[the camera focus on this when this is the active slide]]
-	|
-	+-> other stuff
-`
-
-## TODO
-
-* AudioContext polyfill
-* Make this list and all TODO items in the code / README into issues in github
