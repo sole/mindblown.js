@@ -129,6 +129,30 @@ This object exposes methods to select which slide is rendered, and also to rende
 
 #### Methods
 
+##### `load`
+
+Starts the load process. The `load_progress` and `load_complete` events will be emitted as the process progresses.
+
+##### `render(time)`
+
+Renders a frame with the currently active slide. Note if there are animations (inside replaced elements) in other slides, they will not be played--only the active slide will have animations played.
+
+##### `setSize(width, height)`
+
+Sets renderer size.
+
+##### `show(slideNumber)`
+
+Show slide at position `slideNumber`. Moves the camera to focus on the slide contents, and emits the `change` event when the camera transition is finished.
+
+##### `showNext()`
+
+Shows the next slide. If we're already on the last slide, it shows the first slide.
+
+##### `showPrevious()`
+
+Shows the previous slide. If we're already on the first slide, it shows the last slide.
+
 #### Events
 
 The following events will be triggered when actions happen on a `Slides` instance:
