@@ -193,9 +193,22 @@ MyRenderable.prototype.constructor = MyRenderable;
 #### Methods
 
 ##### `traverseChildren(callback)`
+
+Use it to iterate through every children and run the `callback` function on each of them (each child is passed as argument to the function).
+
+This function will not do a deep traversal, meaning that children of children won't automatically traverse their children and run the callback.
+
 ##### `activate()`
+
+Will be called by the engine when the slide becomes active. Use it to start animations, and start music or sound effects fade ins, etc.
+
 ##### `deactivate()`
+
+Will be called by the engine when the slide becomes inactive. Use it to stop animations, and start music or sound effects fade outs, etc.
+
 ##### `render()`
+
+This method will traverse the children and call `render` on them. That enables `Slide` instances (which inherit from `Renderable`) to call the `render` method on their children when they are rendered as well.
 
 ## Working on this
 
