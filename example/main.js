@@ -105,8 +105,13 @@
 			Renderable.call(this, audioContext);
 
 			var n = 200;
+			var osc;
+			var gain = audioContext.createGain();
+			gain.gain.value = 0.5;
+			gain.connect(this.audioNode);
 			
 			console.log('init cube');
+			console.log('audioContext', audioContext, 'props', nodeProperties);
 
 			var helper = new THREE.AxisHelper(n);
 			this.add(helper);
@@ -118,10 +123,20 @@
 
 			this.activate = function() {
 				console.log('activate cube');
+
+				osc = audioContext.createOscillator();
+				osc.connect(gain);
+				osc.frequency.value = 110 + 110 * Math.random();
+				osc.start();
+				 
 			};
 
 			this.deactivate = function() {
 				console.log('deactivate cube');
+				if(osc) {
+					osc.stop();
+					osc = null;
+				}
 			};
 
 			this.render = function(t) {
