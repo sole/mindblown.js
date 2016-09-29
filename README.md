@@ -55,7 +55,7 @@ These are the available attributes:
 * `padding`: padding around the contents of the slide.
 * `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
 
-## Elements
+## Allowed elements
 
 mindblown.js supports a basic set of HTML elements, and also supports replacing them with your own provided implementation.
 
@@ -76,6 +76,12 @@ Not implemented yet, but in the works: IMG (<a href="https://github.com/sole/min
 
 TODO https://github.com/sole/mindblown.js/issues/2
 
+Defining your own custom elements is also possible. For example, you could build inline demos for your presentation, and they would be placed inside the slide as with the rest of elements.
+
+Or you could decide you want to render an element differently of how the default elements are rendered. You can do all that with custom elements.
+
+Read the section on custom elements to learn more. (TODO: add link to section)
+
 
 ## User API
 
@@ -93,7 +99,7 @@ There are many classes under the hood (you can have a look at [this diagram](./d
 
 * MindBlown ([source](./src/index.js)): the entry point. Sanitises options, builds HTML slides array using the selector, creates and returns an instance of `Slides`.
 * Slides ([source](./src/Slides.js)): the object you'll interact most with. Provides functions for loading and turning HTML into 3D content, advancing the slide, etc.
-* Renderable ([source](./src/Renderable.js)): relevant only if you're going to write your own 3D content. 3D elements are 'Renderables'. Instances are passed an audio context instance and a reference to THREE.js, so they can be written and distributed without including their own copy of THREE.
+* Renderable ([source](./src/Renderable.js)): relevant only if you're going to write your own 3D content, as 3D elements are 'Renderables'.
 
 ### `MindBlown(selector, options)` returns `Slides` instance.
 
@@ -119,9 +125,9 @@ The following options can be passed when calling `MindBlown()`:
  * `cheapRenderer`: Uses a lower quality renderer, without antialias. Default is `false` (i.e. use higher quality renderer).
  * `width`: specify renderer canvas width
  * `height`: specify renderer canvas height
-* `replacements`: An object with pairs of replacements to be used when converting the slides into 3D.
+* `customElements`: An object with pairs of key and element replacements to use when converting the slides into 3D.
 
-All the sections and even the options argument are optional, which is to say that you can get functional basic 3D slides by calling `MindBlown()` with just the HTML selector and *no options*.
+All the sections and even the options argument are optional, or in other words: you can get functional basic 3D slides by calling `MindBlown()` with just the HTML selector and *no options*.
 
 ### `Slides` (event emitter)
 
@@ -182,13 +188,16 @@ To make an object a `Renderable`, you need to call the `Renderable` function in 
 
 
 ```javascript
-function MyRenderable(/* TODO what are the parameters and the order? audioContext should be first...? */) {
+function MyRenderable(element, audioContext, options) {
 	Renderable.call(this, audioContext);
+	// Rest of body
 }
 
 MyRenderable.prototype = Object.create(Renderable.prototype);
 MyRenderable.prototype.constructor = MyRenderable;
 ```
+
+Remember to pass both `this` and `audioContext` when calling `Renderable`; otherwise the instance will not be setup correctly and you might have issues when trying to use it.
 
 #### Methods
 
@@ -209,6 +218,35 @@ Will be called by the engine when the slide becomes inactive. Use it to stop ani
 ##### `render()`
 
 This method will traverse the children and call `render` on them. That enables `Slide` instances (which inherit from `Renderable`) to call the `render` method on their children when they are rendered as well.
+
+### Using custom elements
+
+To use your own elements, you need to let the engine know about them first. This is done when initialising the slides, via the `options` object. Add one or more pairs to the `customElements` entry, like for example:
+
+```javascript
+slides = MindBlown(slidesSelector, {
+	customElements: {
+		'other-thing': OtherThingElement,
+		// ... maybe more
+		'something-else': SomethingElseElement
+	}
+});
+```
+
+Then, each time you want to use them in place of another standard HTML element, you must add an attribute in the element to denote it:
+
+```html
+<img src="cube.jpg" alt="Image of a cube" data-custom-element="cube" />
+```
+You can use them in as many instances as you require.
+
+Caveat: you cannot specify a Renderable directly as a custom element. You need to wrap their constructor in a function, as demonstrated in the example:
+
+TODO add example code
+
+The function takes `Renderable` and `THREE` as parameters, and returns the constructor for your custom element.
+
+We 'wrap' the function this way in order to provide access to the `Renderable` base class and also to the same version of THREE that we are using internally-so you don't need to provide your own, with all the bloat it might involve, and also to avoid conflicts between versions (for example, if the library API changes).
 
 ## Working on this
 
@@ -255,4 +293,3 @@ instance.on('somethingWasDone', function(ev) {
 instance.doSomething();
 
 ```
-
