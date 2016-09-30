@@ -59,16 +59,13 @@ function Slides(htmlSlides, options) {
 	};
 
 
-	this.render = function(time) {		
-		/*
-		 * controls.update();*/
+	this.render = function(time) {
+		
 		// Do not try to render the 'current slide' until we have been
 		// told which slide is it
 		if(currentSlideNumber >= 0) {
 			slides[currentSlideNumber].render(time);
-		}
-		
-		
+		}		
 		
 		TWEEN.update(time);
 		camera.lookAt(cameraTarget);

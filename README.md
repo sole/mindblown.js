@@ -47,30 +47,33 @@ Slides might have special attributes to define their behaviour or appearance. Th
 </section>
 ```
 
-These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we access them using `dataset` in JavaScript.
+These are written in hyphenated form, and the browser will convert them to `camelCase`. E.g. `transition-duration` in HTML becomes `transitionDuration` when we access them using `dataset` in JavaScript (although you probably shouldn't care about this unless you want to contribute to `mindblown.js`).
 
 These are the available attributes:
 
-* `offset-y`: amount of vertical offset for a given slide. Good for 'dramatic effects', such as having the initial slide with a very tall offset. Can be negative (the slide is shifted downwards) or positive. (the slide is shifted upwards). The default is 0.
+* `offset-y`: amount of vertical offset for a given slide. Good for *dramatic effects*, such as having the initial slide with a very tall offset. Can be negative (the slide is shifted downwards) or positive. (the slide is shifted upwards). The default is 0.
 * `padding`: padding around the contents of the slide.
-* `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1).
+* `transition-duration`: the time it takes to transition into this slide, in seconds (default is 1). Also good for *dramatic effects*.
 
 ## Allowed elements
 
-mindblown.js supports a basic set of HTML elements, and also supports replacing them with your own provided implementation.
+`mindblown.js` supports a basic subset of HTML elements, and also supports using your own custom elements.
 
 ### Element attributes
 
-All elements can use these attributes.
+All elements can use these attributes:
 
-* `replace`: specify that the element must be replaced with a custom element. These allow you to display custom 3D graphics and audio within your presentation.
+* `custom-element`: specifies that the element must be replaced with a custom element. These allow you to display custom 3D graphics and audio within your presentation. TODO add link to syntax example
 * `is-decoration`: by default all elements are assumed to be "content", and they will be laid out from top to bottom like in a page layout. When the slide is shown, the camera will make sure the full contents are in sight. If an element is decorative or you want it to be placed at the center of the slide, specify the `data-is-decoration` attribute and it will be taken out of the document flow. The camera might not show the full extent of the scene if the decorative objects are too big, but this might be an intended effect in some cases.
 
 ### Known elements
 
 The engine knows how to render some text elements: `H1` through `H4`, and `P`.
 
-Not implemented yet, but in the works: IMG (<a href="https://github.com/sole/mindblown.js/issues/8">#8</a>) and PRE (for code snippets) (<a href="https://github.com/sole/mindblown.js/issues/9">#9</a>).
+Not implemented yet, but in the works:
+
+* IMG (<a href="https://github.com/sole/mindblown.js/issues/8">#8</a>)
+* and PRE (for code snippets) (<a href="https://github.com/sole/mindblown.js/issues/9">#9</a>).
 
 ### Custom elements
 
@@ -81,7 +84,6 @@ Defining your own custom elements is also possible. For example, you could build
 Or you could decide you want to render an element differently of how the default elements are rendered. You can do all that with custom elements.
 
 Read the section on custom elements to learn more. (TODO: add link to section)
-
 
 ## User API
 
@@ -97,37 +99,36 @@ The whole process can be summarised with the following steps:
 
 There are many classes under the hood (you can have a look at [this diagram](./docs/hierarchy.md) to see the relations between them), but you only need to know about the most important ones to use this framework:
 
-* MindBlown ([source](./src/index.js)): the entry point. Sanitises options, builds HTML slides array using the selector, creates and returns an instance of `Slides`.
+* MindBlown ([source](./src/index.js)): the entry point. Sanitises options, builds an HTML slides array using the selector, and creates and returns an instance of `Slides`.
 * Slides ([source](./src/Slides.js)): the object you'll interact most with. Provides functions for loading and turning HTML into 3D content, advancing the slide, etc.
-* Renderable ([source](./src/Renderable.js)): relevant only if you're going to write your own 3D content, as 3D elements are 'Renderables'.
+* Renderable ([source](./src/Renderable.js)): relevant only if you're going to write your own custom elements, as they need to extend `Renderable`.
 
 ### `MindBlown(selector, options)` returns `Slides` instance.
 
-`selector` is a string describing a DOM selector which points to any number of `section` elements. E.g. `#slides section`. Or just `section`—depends on your particular HTML markup.
-
-`options` is a JavaScript object, with keys and values. These are split into sections, depending on which component they configure. For example:
+* `selector` is a string describing a DOM selector which points to any number of `section` elements. E.g. `#slides section`. Or just `section`—depends on your particular HTML markup.
+* `options` is a JavaScript object, with keys and values. These are split into sections, depending on which component they configure. For example:
 
 ```javascript
 options = {
 	renderer: {
 		cheap: true
 	},
-	replacements: {
-		'cube': CubeReplacement
+	customElements: {
+		'cube': CubeElement
 	}
 };
 ```
 
-The following options can be passed when calling `MindBlown()`:
+The following options can be used when calling `MindBlown()`:
 
 * `colours`: options to configure the presentation colours. TODO: explain format https://github.com/sole/mindblown.js/issues/10
 * `renderer`: options to configure the renderer
  * `cheapRenderer`: Uses a lower quality renderer, without antialias. Default is `false` (i.e. use higher quality renderer).
  * `width`: specify renderer canvas width
  * `height`: specify renderer canvas height
-* `customElements`: An object with pairs of key and element replacements to use when converting the slides into 3D.
+* `customElements`: An object with pairs of key and custom element constructors to use when converting the slides into 3D.
 
-All the sections and even the options argument are optional, or in other words: you can get functional basic 3D slides by calling `MindBlown()` with just the HTML selector and *no options*.
+All the sections, and even the `options` argument are optional, or in other words: you can get functional basic 3D slides by calling `MindBlown()` with just the HTML selector and *no options*.
 
 ### `Slides` (event emitter)
 
@@ -141,7 +142,7 @@ Starts the load process. The `load_progress` and `load_complete` events will be 
 
 ##### `render(time)`
 
-Renders a frame with the currently active slide. Note if there are animations (inside replaced elements) in other slides, they will not be played--only the active slide will have animations played.
+Renders a frame with the currently active slide. Note if there are animations (inside custom elements) in other slides, they will not be updated--only the active slide will have animations played, as only that slide gets its `render` method called.
 
 ##### `setSize(width, height)`
 
@@ -177,14 +178,16 @@ slides.on('load_progress', function(ev) {
 
 ### Renderable
 
-Renderables are the base class for Slides. Each Slide is a Renderable, and might also have other Renderable children. They differ from standard `Object3D`s in two aspects:
+`Renderable` extends from `THREE.Object3D`. It differs from standard `Object3D`s in two aspects:
 
-* they have a few additional functions to render the current slide and all its children objects, if they are `Renderable`s as well.
-* they also have an `audioNode` property by default. If you object generates audio, the output should be connected to `audioNode` so the parent can connect the output of its children's `audioNode` to its own internal mixer, and so on.
+* it has a few additional functions like `render()`, `activate()`, etc.
+* it also has an `audioNode` property. If your object extending `Renderable` generates audio, the output should be connected to `audioNode` so the parent can connect the output of its children's `audioNode` to its own internal mixer, and so on.
 
-#### Creating an instance of Renderable
+`Renderable`s are not meant to be instantiated directly, but used as a base class for other objects. They are the base for `Slide`, and they are the base for custom elements as well.
 
-To make an object a `Renderable`, you need to call the `Renderable` function in your constructor, and also set the prototype of your object to be based on the `Renderable` prototype. This gives you access to the base functions. For example:
+#### Inheriting from Renderable
+
+To make an object extend from `Renderable`, you need to call the `Renderable` function in your constructor, and also set the prototype of your object to be based on the `Renderable` prototype. This gives you access to the base functions. For example:
 
 
 ```javascript
@@ -205,7 +208,7 @@ Remember to pass both `this` and `audioContext` when calling `Renderable`; other
 
 Use it to iterate through every children and run the `callback` function on each of them (each child is passed as argument to the function).
 
-This function will not do a deep traversal, meaning that children of children won't automatically traverse their children and run the callback.
+This function will **not** do a deep traversal, meaning that children of children won't automatically traverse their children and run the callback.
 
 ##### `activate()`
 
@@ -233,44 +236,75 @@ slides = MindBlown(slidesSelector, {
 });
 ```
 
-Then, each time you want to use them in place of another standard HTML element, you must add an attribute in the element to denote it:
+Then, each time you want to use them in place of any other HTML element, you must add an attribute in the element to denote it:
 
 ```html
-<img src="cube.jpg" alt="Image of a cube" data-custom-element="cube" />
+<img src="other-thing.jpg" alt="Image of other thing" data-custom-element="other-thing" />
 ```
-You can use them in as many instances as you require.
+You can use them in as many elements as you wish.
 
-Caveat: you cannot specify a Renderable directly as a custom element. You need to wrap their constructor in a function, as demonstrated in the example:
+Caveat: you cannot specify an instance of `Renderable` directly as a custom element. You need to wrap its constructor with a function, like this:
 
-TODO add example code
+```javascript
+function OtherThingElement(Renderable, THREE) {
+
+	return function(element, audioContext, nodeProperties) {
+
+		Renderable.call(this, audioContext);
+
+		console.log('init other thing');
+
+		// do things to initialise object
+
+		this.activate = function() {
+			console.log('activate cube');
+			// ...				 
+		};
+
+		this.deactivate = function() {
+			console.log('deactivate cube');
+			// ...
+		};
+
+		this.render = function(t) {
+			// ...
+		};
+
+	}
+}
+```
 
 The function takes `Renderable` and `THREE` as parameters, and returns the constructor for your custom element.
 
-We 'wrap' the function this way in order to provide access to the `Renderable` base class and also to the same version of THREE that we are using internally-so you don't need to provide your own, with all the bloat it might involve, and also to avoid conflicts between versions (for example, if the library API changes).
+We wrap the constructor this way in order to get access to the `Renderable` base class and also to the same version of `Three.js` that we are using internally.
+
+Therefore, authors of custom elements don't need to provide their own version of `Three.js`, which avoids bloat and conflicts between versions (for example, if the library API changes), as eventually custom elements are rendered by the version of `Three.js` that `mindblown.js` uses.
 
 ## Working on this
 
-To try it out locally
+If you want to work on the code (perhaps you want to help adding features?! Yay! [here's a list of things to do or fix](https://github.com/sole/mindblown.js/issues)):
 
 * clone repository
 * `npm install`
 * `npm run build`
-* open `example/index.html` in your browser
+* open `example/index.html` in your browser to make sure everything works
 
-The example uses the distributable build in `dist/` which will be eventually also published to npm. If it works with the example, then it's good.
+The example uses the distributable build in `dist/`, which will be eventually be published to [npm](http://npmjs.com/). If it works with the example, then it's good (eventually we'll also have tests. eventually).
 
-Every time a change is made in the core MindBlown code you'll need to rebuild. Or you can use `npm run watch` to start a file watcher that rebuilds the presentation on demand.
+Every time a change is made in the core `mindblow.js` code you'll need to rebuild, so `dist/mindblown.js` is updated.
 
-The `dist` folder should be checked in the repository - so if someone git clones the repository, they can run the example without even running `npm install && npm run build`.
+Alternatively, you can use `npm run watch` instead of `npm run build`, to start a file watcher that rebuilds the library each time files inside `src/` are modified.
 
-The `package.json` file exposes `src/index.js`, not the `dist` version. This is for people building presentations with node.js, and this also allows bundlers to do whatever optimisations they need to do, which are harder to do if the code is a big bundle.
+The `dist` folder should be checked in the repository, so if someone `git clone`s the repository, they can run the example without even running `npm install && npm run build`.
+
+The `package.json` file exposes `src/index.js`, not the `dist` version. This is for people building presentations with node.js, and this also allows bundlers to do whatever optimisations they can do, which are harder to do if the code is a big bundle.
 
 
 ### Events
 
-There's a lot of asynchronicity here. We use node.js's `EventEmitter` rather than DOM style events.
+There's a lot of asynchronicity here. We use `node.js`'s `EventEmitter` rather than DOM style events.
 
-The pattern to make an object an EventEmitter and listen to its events is the following:
+The pattern to make an object an `EventEmitter` and listen to its events is the following:
 
 ```javascript
 var EventEmitter = require('events').EventEmitter;

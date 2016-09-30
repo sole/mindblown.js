@@ -14,8 +14,8 @@
 				width: 640,
 				height: 360
 			},
-			replacements: {
-				'cube': CubeReplacement
+			customElements: {
+				'cube': CubeElement
 			}
 		});
 		
@@ -98,9 +98,9 @@
 		slides.show(index);
 	}
 
-	function CubeReplacement(Renderable, THREE) {
+	function CubeElement(Renderable, THREE) {
 
-		return function SceneCube(element, audioContext, nodeProperties) {
+		return function(element, audioContext, nodeProperties) {
 
 			Renderable.call(this, audioContext);
 

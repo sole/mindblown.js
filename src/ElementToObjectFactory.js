@@ -2,44 +2,28 @@ var TextObject = require('./objects/Text');
 var Renderable = require('./Renderable');
 var THREE = require('THREE');
 
-/**
- * ##########(Renderable, THREE) {
- *	return function(element, audioContext, nodeProperties) {
- *		Renderable.call(this, audioContext);
- *
- *		this.activate = function() {};
- *		this.render = function() {};
- *		this.deactivate = function() {};
- *	}
- * }
- *
- * //side:
- * r.prototype = Object.create(Renderable.prototype);
- * r.prototype.constructor = r;
- */
 module.exports = function(options, audioContext) {
 	
 	var knownElements = makeListOfKnownElements(options);
 	var isElementKnown = makeContainsFunction(knownElements);
-	var replacements = makeReplacementsList(options);
-	var hasReplacement = makeContainsFunction(replacements);
+	var customElements = makeCustomElementsList(options);
 
 	this.convert = function(element) {
 
 		var name = element.nodeName;
 		var dataset = element.dataset || {};
 	
-		// We check if the 'data-replace' attribute is present on the node
+		// We check if the 'data-custom-element' attribute is present on the node
 		// If it is, it takes priority vs a possible element we might know how to render already
-		var replacementName = dataset.replace;
-		var replacement = replacements[replacementName];
+		var customElementName = dataset.customElement;
+		var customElement = customElements[customElementName];
 		var ctor;
 		var settings;
 		var object = null;
 		
-		if(replacement) {
-			console.log('choosing replacement = ', replacementName);
-			object = new replacement(element, audioContext, element.dataset);
+		if(customElement) {
+			console.log('choosing customElement = ', customElementName);
+			object = new customElement(element, audioContext, element.dataset);
 		} else if(isElementKnown(name)) {
 			var elementDefinition = knownElements[name];
 			object = elementDefinition.constructor(element, audioContext, elementDefinition.settings);
@@ -106,25 +90,25 @@ module.exports = function(options, audioContext) {
 	}
 
 
-	// We cannot use the replacements directly because in order for them to use
+	// We cannot use the customElements directly because in order for them to use
 	// both the same Renderable and THREE objects we have to generate their
 	// constructors via the functions the author provided.
 	// Then we need to augment their constructor prototype too (so authors don't
 	// have to do it, which can be tedious)
-	function makeReplacementsList(options) {
-		var sources = options.replacements;
+	function makeCustomElementsList(options) {
+		var sources = options.customElements;
 		var keys = Object.keys(sources);
-		var replacements = {};
+		var customElements = {};
 		
 		keys.forEach((k) => {
 			var gen = sources[k];
 			var ctor = gen(Renderable, THREE);
 			ctor.prototype = Object.create(Renderable.prototype);
 			ctor.prototype.constructor = ctor;
-			replacements[k] = ctor;
+			customElements[k] = ctor;
 		});
 
-		return replacements;
+		return customElements;
 
 	}
 
