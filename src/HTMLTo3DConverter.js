@@ -26,7 +26,7 @@ function HTMLto3DConverter() {
 		var slideConverter = new HTMLto3DSlideConverter();
 		slideConverter.on('processing_end', finishSlide);
 
-		console.log('Converting ', elements.length + ' HTML slides to 3D');
+		console.log('Converting', elements.length + ' HTML slides to 3D');
 
 		self.emit('processing_start', {
 			numElements: elements.length

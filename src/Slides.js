@@ -30,7 +30,6 @@ function Slides(htmlSlides, options) {
 
 
 	this.load = function() {
-		console.log('load');
 
 		// Hand over to the Loader to do the heavy lifting
 		// It will set the null variables in `this`.
@@ -41,14 +40,12 @@ function Slides(htmlSlides, options) {
 			console.info('completed load');
 
 			slides = slideObjects;
-			console.log(slides.length);
 			
 			// Grab some references so it's easier & faster to use these objects
 			camera = self.sceneData.camera;
 			cameraTarget = self.sceneData.cameraTarget;
 			scene = self.sceneData.scene;
 			renderer = self.renderer;
-			console.log('rendererrrr', renderer);
 			
 			self.setSize(options.renderer.width, options.renderer.height);
 

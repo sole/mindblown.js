@@ -21,7 +21,6 @@ module.exports = function(options) {
 function copyToObject(dst, src) {
 	var srcKeys = Object.keys(src);
 	srcKeys.forEach((k) => {
-		console.log('copying', k, dst[k], src[k]);
 		dst[k] = src[k];
 	});
 }
