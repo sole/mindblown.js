@@ -44,7 +44,6 @@ function HTMLto3DSlideConverter() {
 				if(object.audioNode) {
 					object.audioNode.connect(slideObject.audioNode);
 				}
-
 			}
 
 		});
