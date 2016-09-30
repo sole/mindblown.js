@@ -81,7 +81,7 @@ Defining your own custom elements is also possible. For example, you could build
 
 Or you could decide you want to render an element differently of how the default elements are rendered. You can do all that with custom elements.
 
-Read [the section on custom elements](./#using-custom-elements) to learn more.
+Read [the section on custom elements](#using-custom-elements) to learn more.
 
 ## User API
 
