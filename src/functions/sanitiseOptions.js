@@ -1,5 +1,6 @@
 var defaults = {
 	colours: require('../defaultSettings/colours'),
+	customElements: {},
 	renderer: require('../defaultSettings/renderer')
 };
 

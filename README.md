@@ -37,9 +37,9 @@ slides.load();
 
 ## Slides
 
-### Custom slide attributes
+### Slide attributes
 
-Slides might have special attributes to define their behaviour or appearance. These attributes are prefixed with `data-`. For example:
+Slides might have attributes to define their behaviour or appearance. These attributes are prefixed with `data-`. For example:
 
 ```html
 <section data-padding="100" data-offset-y="200" data-transition-duration="10">
@@ -77,13 +77,11 @@ Not implemented yet, but in the works:
 
 ### Custom elements
 
-TODO https://github.com/sole/mindblown.js/issues/2
-
 Defining your own custom elements is also possible. For example, you could build inline demos for your presentation, and they would be placed inside the slide as with the rest of elements.
 
 Or you could decide you want to render an element differently of how the default elements are rendered. You can do all that with custom elements.
 
-Read the section on custom elements to learn more. (TODO: add link to section)
+Read [the section on custom elements](./#using-custom-elements) to learn more.
 
 ## User API
 
