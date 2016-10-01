@@ -2,6 +2,7 @@ var THREE = require('three');
 var HTMLto3DConverter = require('./HTMLto3DConverter');
 var distributeObjects = require('./functions/distributeObjects');
 var makeObjectBox = require('./functions/makeObjectBox');
+var debugObject = require('./functions/debugObject')(THREE);
 
 /**
  * Deals with all the loading and initialisation of assets so the Slides object
@@ -41,6 +42,9 @@ module.exports = function Loader(slides, htmlItems, options, onProgress, onCompl
 			// (slides position won't change past this point)
 			var box = makeObjectBox(obj);
 			obj.center = box.center();
+
+			//debugObject(obj);
+			obj.children.forEach(debugObject);
 			
 		});
 
@@ -125,3 +129,5 @@ function loadContent(htmlItems, options, audioSystem, onProgress, onComplete) {
 	converter.process(htmlItems, options, audioSystem);
 
 }
+
+

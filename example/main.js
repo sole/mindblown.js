@@ -16,6 +16,9 @@
 			},
 			customElements: {
 				'cube': CubeElement
+			},
+			colours: {
+				background: 0x80ffff,
 			}
 		});
 		
@@ -98,12 +101,12 @@
 		slides.show(index);
 	}
 
+		
 	function CubeElement(Renderable, THREE) {
-
+	
 		return function(element, audioContext, nodeProperties) {
 
 			Renderable.call(this, audioContext);
-
 			var n = 200;
 			var osc;
 			var gain = audioContext.createGain();
@@ -111,8 +114,7 @@
 			gain.connect(this.audioNode);
 			
 			console.log('init cube');
-			console.log('audioContext', audioContext, 'props', nodeProperties);
-
+			
 			var helper = new THREE.AxisHelper(n);
 			this.add(helper);
 
