@@ -119,7 +119,12 @@ options = {
 
 The following options can be used when calling `MindBlown()`:
 
-* `colours`: options to configure the presentation colours. TODO: explain format https://github.com/sole/mindblown.js/issues/10
+* `colours`: options to configure the presentation colours. There are just five colours. Both primary and secondary should be readable against the background. Primary colours should be used for main content and secondary colours for the colour touches and smaller text.
+ * background
+ * primary1
+ * primary2
+ * secondary1
+ * secondary2
 * `renderer`: options to configure the renderer
  * `cheapRenderer`: Uses a lower quality renderer, without antialias. Default is `false` (i.e. use higher quality renderer).
  * `width`: specify renderer canvas width
@@ -127,6 +132,8 @@ The following options can be used when calling `MindBlown()`:
 * `customElements`: An object with pairs of key and custom element constructors to use when converting the slides into 3D.
 
 All the sections, and even the `options` argument are optional, or in other words: you can get functional basic 3D slides by calling `MindBlown()` with just the HTML selector and *no options*.
+
+If you're curious about the default values, they are defined in (src/defaultSettings/)[./src/defaultSettings].
 
 ### `Slides` (event emitter)
 
