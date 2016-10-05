@@ -278,54 +278,6 @@ We wrap the constructor this way in order to get access to the `Renderable` base
 
 Therefore, authors of custom elements don't need to provide their own version of `Three.js`, which avoids bloat and conflicts between versions (for example, if the library API changes), as eventually custom elements are rendered by the version of `Three.js` that `mindblown.js` uses.
 
-## Working on this
-
-If you want to work on the code (perhaps you want to help adding features?! Yay! [here's a list of things to do or fix](https://github.com/sole/mindblown.js/issues)):
-
-* clone repository
-* `npm install`
-* `npm run build`
-* open `example/index.html` in your browser to make sure everything works
-
-The example uses the distributable build in `dist/`, which will be eventually be published to [npm](http://npmjs.com/). If it works with the example, then it's good (eventually we'll also have tests. eventually).
-
-Every time a change is made in the core `mindblow.js` code you'll need to rebuild, so `dist/mindblown.js` is updated.
-
-Alternatively, you can use `npm run watch` instead of `npm run build`, to start a file watcher that rebuilds the library each time files inside `src/` are modified.
-
-The `dist` folder should be checked in the repository, so if someone `git clone`s the repository, they can run the example without even running `npm install && npm run build`.
-
-The `package.json` file exposes `src/index.js`, not the `dist` version. This is for people building presentations with node.js, and this also allows bundlers to do whatever optimisations they can do, which are harder to do if the code is a big bundle.
-
-
-### Events
-
-There's a lot of asynchronicity here. We use `node.js`'s `EventEmitter` rather than DOM style events.
-
-The pattern to make an object an `EventEmitter` and listen to its events is the following:
-
-```javascript
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
-
-var MyObject = function() {
-	EventEmitter.call(this);
-
-	this.doSomething = function() {
-		this.emit('somethingWasDone', { when: Date.now() });
-	};
-};
-
-util.inherits(MyObject, EventEmitter);
-
-var instance = new MyObject();
-instance.on('somethingWasDone', function(ev) {
-	console.log('something was done!', ev.when);
-});
-instance.doSomething();
-
-```
-
 ## License
 
 Copyright 2016 Soledad Penadés (https://soledadpenades.com/)
